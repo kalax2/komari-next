@@ -19,6 +19,7 @@ import NodeDisplay from "@/components/NodeDisplay";
 import { formatBytes } from "@/utils/unitHelper";
 import { useLiveData } from "@/contexts/LiveDataContext";
 import { useNodeList } from "@/contexts/NodeListContext";
+import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Loading from "@/components/loading";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
@@ -41,7 +42,14 @@ const formatSpeed = (bytes: number): string => {
 export default function Dashboard() {
   const [t] = useTranslation();
   const { live_data } = useLiveData();
-  //document.title = t("home_title");
+  const { publicInfo } = usePublicInfo();
+  // Sync document title with backend-set custom title
+  useEffect(() => {
+    if (publicInfo?.sitename) {
+      document.title = publicInfo.sitename;
+    }
+  }, [publicInfo?.sitename]);
+  
   //#region 节点数据
   const { nodeList, isLoading, error, refresh } = useNodeList();
 
