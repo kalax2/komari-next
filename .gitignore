@@ -1,51 +1,72 @@
-# Logs
-logs
-*.log
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+/dist
+/dist-ssr
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# Dependency directories
-node_modules/
-package-lock.json
+# Vercel
+.vercel
 
-# Build output
-dist/
-dist-ssr/
-*.local
-bundle-analysis.html
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
-# Environment variables
+# Environment Variables
 .env
-.env.local
+.env*.local
 .env.development
-.env.development.local
-.env.test.local
-.env.production.local
+.env.test
+.env.production
 
-# Vite specific
-.vite/
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-
-# IDEs and editors
-.idea/
+# IDEs and Editors
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+.idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-# OS generated files
+# OS Files
 .DS_Store
 Thumbs.db
 
-# Testing
-coverage/
-*.lcov
+# Old Vite files (from migration)
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+vite.config.dev.ts
+
+# Old React Router pages (migrated to Next.js)
+/src/pages.old/
+/src/pages/
 
 # Yarn
 .yarn/*
@@ -56,15 +77,16 @@ coverage/
 !.yarn/versions
 .pnp.*
 
+# PWA
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
+public/sw.js.map
+public/workbox-*.js.map
+public/worker-*.js.map
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-vite.config.dev.ts
+# Bundle Analysis
+bundle-analysis.html
+
+# Testing
+*.lcov
