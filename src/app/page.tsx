@@ -236,7 +236,7 @@ const Callouts = () => {
           </AlertDescription>
         </Alert>
       )}
-      {showCallout && (
+      {!showCallout && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>{t("warn_websocket")}</AlertTitle>
