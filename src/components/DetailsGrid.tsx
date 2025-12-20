@@ -4,7 +4,9 @@ import { useNodeList } from "@/contexts/NodeListContext";
 import { useLiveData } from "@/contexts/LiveDataContext";
 import { formatUptime } from "./Node";
 import { formatBytes } from "@/utils/unitHelper";
-import { Flex, Text, Card } from "@radix-ui/themes";
+import { Flex } from "@/components/ui/flex";
+import { Text } from "@/components/ui/text";
+import { Card } from "@/components/ui/card";
 
 type DetailsGridProps = {
   uuid: string;
@@ -102,7 +104,7 @@ export const DetailsGrid = ({ uuid, gap, box, align }: DetailsGridProps) => {
         />
         <label className={`flex flex-wrap gap-2 flex-[0_0_calc(50%-0.5rem)] ${align === "center" ? "justify-end" : ""}`}>
           <Flex align={"center"} gap="2">
-            <Text size="2" weight="bold" wrap="nowrap">
+            <Text size="2" weight="bold" className="whitespace-nowrap">
               {t("nodeCard.last_updated")}
             </Text>
             <Text size="2">

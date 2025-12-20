@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Checkbox, TextField } from "@radix-ui/themes";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import {
   Table,
@@ -107,18 +108,17 @@ function SelectorInner<T>(props: SelectorProps<T>) {
 
   return (
     <div className={`flex flex-col ${className}`}>
-      <TextField.Root
-        className="mb-2 flex items-center gap-1"
-        placeholder={searchPlaceholder}
-        value={search}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setSearch(e.target.value)
-        }
-      >
-        <TextField.Slot>
-          <Search size="16" />
-        </TextField.Slot>
-      </TextField.Root>
+      <div className="relative mb-2">
+        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder={searchPlaceholder}
+          value={search}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearch(e.target.value)
+          }
+          className="pl-8"
+        />
+      </div>
       <div className="selector rounded-md overflow-hidden">
         <Table>
           <TableHeader>

@@ -40,7 +40,10 @@ const Footer = () => {
       <div className="container flex flex-col md:flex-row items-center justify-between gap-4 py-6 px-4">
         <div className="flex flex-col items-center md:items-start gap-2">
           <p className="text-sm text-muted-foreground">
-            Powered by <span className="font-semibold text-foreground">Komari Monitor</span>
+            Supports <span className="font-semibold text-foreground">Komari</span>
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Powered by <span className="font-semibold text-foreground">Komari-Next</span>
           </p>
           {buildTime && (
             <p className="text-xs text-muted-foreground">
@@ -79,4 +82,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

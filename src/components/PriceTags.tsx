@@ -1,4 +1,5 @@
-import { Badge, Flex } from "@radix-ui/themes";
+import { Badge } from "@/components/ui/badge";
+import { Flex } from "@/components/ui/flex";
 import { useTranslation } from "react-i18next";
 
 const PriceTags = ({
@@ -31,7 +32,7 @@ const PriceTags = ({
   return (
     <Flex gap="1" {...props} wrap="wrap">
       {ip4 && (
-        <Badge size="1" variant="soft" className="text-sm" color="green">
+        <Badge  variant="outline" className="text-sm" >
           <label className="flex justify-center items-center gap-1 text-xs">
             <div className="border-2 rounded-4xl border-green-500"></div>
             V4
@@ -40,7 +41,7 @@ const PriceTags = ({
       )}
 
       {ip6 && (
-        <Badge size="1" variant="soft" className="text-sm" color="green">
+        <Badge  variant="outline" className="text-sm" >
           <label className="flex justify-center items-center gap-1 text-xs">
             <div className="border-2 rounded-4xl border-green-500"></div>
             V6
@@ -48,7 +49,7 @@ const PriceTags = ({
         </Badge>
       )}
 
-      <Badge color="iris" size="1" variant="soft" className="text-sm">
+      <Badge color="iris"  variant="outline" className="text-sm">
         <label className="text-xs">
           {price == -1 ? t("common.free") : `${currency}${price}`}/
           {(() => {
@@ -89,8 +90,8 @@ const PriceTags = ({
             return "green";
           }
         })()}
-        size="1"
-        variant="soft"
+        
+        variant="outline"
         className="text-sm"
       >
         <label className="text-xs">
@@ -203,7 +204,7 @@ const CustomTags = ({ tags }: { tags?: string }) => {
           <Badge
             key={index}
             color={badgeColor}
-            variant="soft"
+            variant="outline"
             className="text-sm"
           >
             <label className="text-xs">{text}</label>

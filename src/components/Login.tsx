@@ -1,17 +1,22 @@
 import * as React from "react";
 import {
   Dialog,
-  Flex,
-  Text,
-  TextField,
-  Button,
-  Box,
-  IconButton,
-} from "@radix-ui/themes";
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Flex } from "@/components/ui/flex";
+import { Text } from "@/components/ui/text";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import { useTranslation } from "react-i18next";
 import { TablerSettings } from "./Icones/Tabler";
 import { AccountProvider, useAccount } from "@/contexts/AccountContext";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
+import { useMounted } from "@/hooks/useMounted";
 
 type LoginDialogProps = {
   trigger?: React.ReactNode | string;
@@ -25,6 +30,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
   const InnerLayout = () => {
     const { account, loading, error, refresh } = useAccount();
     const [t] = useTranslation();
+    const mounted = useMounted();
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [twoFac, setTwoFac] = React.useState("");
@@ -98,11 +104,11 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
     };
 
     if (loading) {
-      return <Button disabled>{t("loading")}</Button>;
+      return <Button disabled>{mounted ? t("loading") : "Loading..."}</Button>;
     }
     if (error || !account) {
       return (
-        <Button disabled color="red">
+        <Button disabled className="text-destructive">
           Error
         </Button>
       );
@@ -113,9 +119,9 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
       }
       return (
         <a href="/admin" target="_blank">
-          <IconButton>
+          <Button variant="ghost" size="icon">
             <TablerSettings></TablerSettings>
-          </IconButton>
+          </Button>
         </a>
       );
     }
@@ -144,13 +150,13 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
       );
     }
     return (
-  <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Trigger>
+  <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
           {trigger ? trigger : <Button>{t("login.title")}</Button>}
-        </Dialog.Trigger>
-        <Dialog.Content maxWidth="450px">
-          <Dialog.Title>{t("login.title")}</Dialog.Title>
-          <Dialog.Description size="2" mb="4">
+        </DialogTrigger>
+        <DialogContent className="max-w-[450px]">
+          <DialogTitle>{t("login.title")}</DialogTitle>
+          <DialogDescription className="mb-4">
             <div className="flex justify-center flex-col gap-2">
               <label>{t("login.desc")}</label>
               {info && (
@@ -160,7 +166,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
               )}
             </div>
 
-          </Dialog.Description>
+          </DialogDescription>
           <Box
             onSubmit={(e) => {
               e.preventDefault(); // Prevent native form submission
@@ -173,10 +179,10 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
               {passwordLoginEnabled && (
                 <>
                   <label>
-                    <Text as="div" size="2" mb="1" weight="bold">
+                    <Text as="div" size="2" weight="bold">
                       {t("login.username")}
                     </Text>
-                    <TextField.Root
+                    <Input
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       onKeyDown={handleKeyDown}
@@ -186,10 +192,10 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                     />
                   </label>
                   <label>
-                    <Text as="div" size="2" mb="1" weight="bold">
+                    <Text as="div" size="2" weight="bold">
                       {t("login.password")}
                     </Text>
-                    <TextField.Root
+                    <Input
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       onKeyDown={handleKeyDown}
@@ -199,10 +205,10 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                     />
                   </label>
                   <label hidden={!require2FA}>
-                    <Text as="div" size="2" mb="1" weight="bold">
+                    <Text as="div" size="2" weight="bold">
                       {t("login.two_factor")}
                     </Text>
-                    <TextField.Root
+                    <Input
                       value={twoFac}
                       onChange={(e) => setTwoFac(e.target.value)}
                       onKeyDown={handleKeyDown}
@@ -212,7 +218,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                     />
                   </label>
                   {errorMsg && (
-                    <Text as="div" size="2" color="red">
+                    <Text as="div" size="2" className="text-destructive">
                       {errorMsg}
                     </Text>
                   )}
@@ -232,7 +238,7 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
                   onClick={() => {
                     window.location.href = "/api/oauth";
                   }}
-                  variant={passwordLoginEnabled ? "soft" : "solid"}
+                  variant={passwordLoginEnabled ? "outline" : "default"}
                   disabled={isLoading}
                   type="button"
                 >
@@ -249,8 +255,8 @@ const LoginDialog = ({ trigger, autoOpen = false, showSettings = true, info, onL
               )}
             </Flex>
           </Box>
-        </Dialog.Content>
-      </Dialog.Root>
+        </DialogContent>
+      </Dialog>
     );
   };
   return (

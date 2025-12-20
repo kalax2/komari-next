@@ -5,7 +5,7 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Komari Monitor",
+  title: "Server Monitor",
   description: "A simple server monitor tool.",
 };
 

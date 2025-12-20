@@ -1,7 +1,5 @@
 "use client";
 
-import ThemeSwitch from "./ThemeSwitch";
-import ColorSwitch from "./ColorSwitch";
 import LanguageSwitch from "./Language";
 import LoginDialog from "./Login";
 import { Button } from "@/components/ui/button";
@@ -21,15 +19,9 @@ const NavBar = () => {
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              {publicInfo?.sitename || "Komari"}
+              {publicInfo?.sitename || "Monitor"}
             </span>
           </Link>
-          <div className="hidden md:flex items-end gap-1">
-            <div className="h-6 w-0.5 bg-gradient-to-b from-primary/40 to-primary/20" />
-            <span className="text-sm font-semibold text-muted-foreground">
-              Komari Monitor
-            </span>
-          </div>
         </div>
 
         {/* Actions */}
@@ -43,8 +35,6 @@ const NavBar = () => {
             <GitHubLogoIcon className="h-5 w-5" />
           </Button>
 
-          <ThemeSwitch />
-          <ColorSwitch />
           <LanguageSwitch />
 
           {publicInfo?.private_site ? (

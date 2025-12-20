@@ -1,4 +1,10 @@
-import { DropdownMenu, IconButton } from "@radix-ui/themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { resources } from "../i18n/config";
@@ -15,7 +21,7 @@ const languages: { code: string; name: string }[] = Object.entries(resources)
 
 const LanguageSwitch = ({
   icon = (
-    <IconButton variant="soft">
+    <Button variant="ghost" size="icon">
       <svg xmlns="http://www.w3.org/2000/svg" width="50%" viewBox="0 0 24 24">
         <g fill="none">
           <path
@@ -24,24 +30,24 @@ const LanguageSwitch = ({
           />
         </g>
       </svg>
-    </IconButton>
+    </Button>
   ),
 }: LanguageSwitch = {}) => {
   const { i18n } = useTranslation();
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger>{icon}</DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{icon}</DropdownMenuTrigger>
+      <DropdownMenuContent>
         {languages.map((lang) => (
-          <DropdownMenu.Item
+          <DropdownMenuItem
             key={lang.code}
             onClick={() => i18n.changeLanguage(lang.code)}
           >
             {lang.name} ({lang.code.slice(0, 2)})
-          </DropdownMenu.Item>
+          </DropdownMenuItem>
         ))}
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

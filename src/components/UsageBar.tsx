@@ -1,4 +1,6 @@
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { Box } from '@/components/ui/box';
+import { Flex } from '@/components/ui/flex';
+import { Text } from '@/components/ui/text';
 
 interface UsageBarProps {
   value: number; // Utilization percentage (0–100)

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box } from "@radix-ui/themes";
+import { Box } from "@/components/ui/box";
 
 interface FlagProps {
   flag: string; // 地区代码 (例如 "SG", "US") 或旗帜 emoji (例如 "🇸🇬", "🇺🇳")

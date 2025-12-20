@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: 'dist',
   // Remove static export for now to enable API proxying
   // output: 'export',
   images: {

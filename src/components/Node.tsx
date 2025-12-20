@@ -1,17 +1,23 @@
-import {
-  Card,
-  Flex,
-  Text,
-  Badge,
-  Separator,
-  IconButton,
-} from "@radix-ui/themes";
+import { Card } from "@/components/ui/card";
+import { Flex } from "@/components/ui/flex";
+import { Text } from "@/components/ui/text";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Box } from "@/components/ui/box";
 import type { LiveData, Record } from "../types/LiveData";
+import type { TFunction } from "i18next";
+import type { NodeBasicInfo } from "@/contexts/NodeListContext";
+import Link from "next/link";
+import { useIsMobile } from "@/hooks/use-mobile";
 import UsageBar from "./UsageBar";
 import Flag from "./Flag";
+import PriceTags from "./PriceTags";
 import { useTranslation } from "react-i18next";
 import Tips from "./ui/tips";
-
+import { TrendingUp } from "lucide-react";
+import MiniPingChartFloat from "./MiniPingChartFloat";
+import { getOSImage, getOSName } from "@/utils";
 import { formatBytes } from "@/utils/unitHelper";
 
 /** 格式化秒*/
@@ -70,7 +76,7 @@ const Node = ({ basic, live, online }: NodeProps) => {
       className="node-card hover:cursor-pointer hover:shadow-lg hover:bg-accent-2"
     >
       <Flex direction="column" gap="2">
-        <Flex justify="between" align="center" my={isMobile ? "-1" : "0"}>
+        <Flex justify="between" align="center" className={isMobile ? "-my-1" : "my-0"}>
           <Flex justify="start" align="center" style={{ flex: 1, minWidth: 0 }}>
             <Flag flag={basic.region} />
             <Link href={`/instance/${basic.uuid}`} style={{ flex: 1, minWidth: 0 }}>
@@ -113,18 +119,18 @@ const Node = ({ basic, live, online }: NodeProps) => {
               uuid={basic.uuid}
               hours={24}
               trigger={
-                <IconButton variant="ghost" size="1">
+                <Button variant="ghost" size="icon">
                   <TrendingUp size="14" />
-                </IconButton>
+                </Button>
               }
             />
-            <Badge color={online ? "green" : "red"} variant="soft">
+            <Badge variant="outline">
               {online ? t("nodeCard.online") : t("nodeCard.offline")}
             </Badge>
           </Flex>
         </Flex>
 
-        <Separator size="4" className="-mt-1" />
+        <Separator className="-mt-1" />
 
         <Flex direction="column" gap="2">
           <Flex justify="between" hidden={isMobile}>
@@ -258,15 +264,6 @@ type NodeGridProps = {
   liveData: LiveData;
 };
 
-import { Box } from "@radix-ui/themes";
-import type { TFunction } from "i18next";
-import Link from "next/link";
-import { useIsMobile } from "@/hooks/use-mobile";
-import type { NodeBasicInfo } from "@/contexts/NodeListContext";
-import PriceTags from "./PriceTags";
-import { TrendingUp } from "lucide-react";
-import MiniPingChartFloat from "./MiniPingChartFloat";
-import { getOSImage, getOSName } from "@/utils";
 export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
   // 确保liveData是有效的
   const onlineNodes = liveData && liveData.online ? liveData.online : [];

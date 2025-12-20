@@ -1,5 +1,13 @@
 import React from "react";
-import { Dialog, Button, Flex } from "@radix-ui/themes";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Flex } from "@/components/ui/flex";
 import NodeSelector from "./NodeSelector";
 import { useTranslation } from "react-i18next";
 
@@ -43,12 +51,12 @@ const NodeSelectorDialog: React.FC<NodeSelectorDialogProps> = ({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
         {children ? children : <Button>{title || t("common.select")}</Button>}
-      </Dialog.Trigger>
-      <Dialog.Content style={{ maxWidth: 400 }}>
-        <Dialog.Title>{title || t("common.select")}</Dialog.Title>
+      </DialogTrigger>
+      <DialogContent className="max-w-[400px]">
+        <DialogTitle>{title || t("common.select")}</DialogTitle>
         <Flex direction="column" gap="3">
           <NodeSelector
             value={temp}
@@ -58,14 +66,14 @@ const NodeSelectorDialog: React.FC<NodeSelectorDialogProps> = ({
             hiddenDescription={hiddenDescription}
           />
           <Flex justify="end" gap="2">
-            <Dialog.Close>
-              <Button variant="soft">{t("common.cancel")}</Button>
-            </Dialog.Close>
+            <DialogClose asChild>
+              <Button variant="outline">{t("common.cancel")}</Button>
+            </DialogClose>
             <Button onClick={handleOk}>{t("common.done")}</Button>
           </Flex>
         </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 };
 

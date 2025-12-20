@@ -1,5 +1,16 @@
 import React, { useRef } from "react";
-import { Dialog, Box, Flex, Button, Text, Card } from "@radix-ui/themes";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Flex } from "@/components/ui/flex";
+import { Box } from "@/components/ui/box";
+import { Text } from "@/components/ui/text";
 import { Upload as UploadIcon } from "lucide-react";
 
 export type UploadDialogProps = {
@@ -77,11 +88,11 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Content maxWidth="450px">
-        <Dialog.Title>{title}</Dialog.Title>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[450px]">
+        <DialogTitle>{title}</DialogTitle>
         {description ? (
-          <Dialog.Description>{description}</Dialog.Description>
+          <DialogDescription>{description}</DialogDescription>
         ) : null}
 
         <Box className="space-y-4 mt-4">
@@ -146,8 +157,7 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
 
               {onCancelUpload ? (
                 <Button
-                  variant="soft"
-                  color="gray"
+                  variant="outline"
                   onClick={onCancelUpload}
                   disabled={progress >= 100}
                 >
@@ -158,15 +168,15 @@ const UploadDialog: React.FC<UploadDialogProps> = ({
           </Box>
         )}
 
-        <Flex gap="3" mt="4" justify="end">
-          <Dialog.Close>
-            <Button variant="soft" color="gray">
+        <Flex justify="end" className="gap-3 mt-4">
+          <DialogClose asChild>
+            <Button variant="outline">
               {closeLabel}
             </Button>
-          </Dialog.Close>
+          </DialogClose>
         </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 };
 

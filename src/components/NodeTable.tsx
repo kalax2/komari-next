@@ -7,7 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { Badge, Flex, IconButton } from "@radix-ui/themes";
+import { Badge } from "@/components/ui/badge";
+import { Flex } from "@/components/ui/flex";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
@@ -296,16 +298,16 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                 >
                   <TableCell>
                     <div className="flex justify-center items-center">
-                      <IconButton
+                      <Button
                         variant="ghost"
-                        size="1"
+                        size="icon"
                         className={`expand-button ${
                           isExpanded ? "expanded" : ""
                         }`}
                         aria-label="Expand row"
                       >
                         <ChevronRight size={16} />
-                      </IconButton>
+                      </Button>
                     </div>
                   </TableCell>
                   <TableCell className="node-name-cell">
@@ -316,7 +318,7 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                         className="hover:underline"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Flex direction="column" gap="0">
+                        <Flex direction="column" className="gap-0">
                           <label className="max-w-[150px] font-bold text-lg truncate">
                             {node.name}
                           </label>
@@ -347,9 +349,9 @@ const NodeTable: React.FC<NodeTableProps> = ({ nodes, liveData }) => {
                     >
                       <div>
                         <Badge
-                          color={isOnline ? "green" : "red"}
-                          variant="soft"
-                          size="1"
+                          
+                          variant="outline"
+                          
                         >
                           {isOnline
                             ? t("nodeCard.online")
@@ -431,7 +433,7 @@ interface ExpandedNodeDetailsProps {
 const ExpandedNodeDetails: React.FC<ExpandedNodeDetailsProps> = ({ node }) => {
   return (
     <div className="p-4 space-y-4">
-      <DetailsGrid gap="0" uuid={node.uuid} />
+      <DetailsGrid uuid={node.uuid} />
       <div>
         <MiniPingChart hours={24} uuid={node.uuid} />
       </div>
