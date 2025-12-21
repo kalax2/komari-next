@@ -6,11 +6,12 @@ import { useLiveData } from "@/contexts/LiveDataContext";
 import { useTranslation } from "react-i18next";
 import type { Record } from "@/types/LiveData";
 import Flag from "@/components/Flag";
-import { Flex, SegmentedControl, Text } from "@radix-ui/themes";
+import { SegmentedControl } from "@radix-ui/themes";
 import { useNodeList } from "@/contexts/NodeListContext";
 import { liveDataToRecords } from "@/utils/RecordHelper";
 import LoadChart from "./LoadChart";
 import PingChart from "./PingChart";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 // Import DetailsGrid as client-only to prevent hydration mismatch with i18n
 const DetailsGrid = dynamic(
@@ -70,44 +71,48 @@ export default function InstancePage({ uuid }: InstancePageProps) {
   }, [onRefresh, uuid, length]);
 
   return (
-    <Flex className="items-center" direction={"column"} gap="2">
-      <div className="flex flex-col gap-1 md:p-4 p-3 border-0 rounded-md">
-        <h1 className="flex items-center flex-wrap">
-          <Flag flag={node?.region ?? ""} />
-          <Text size="3" weight="bold" wrap="nowrap">
-            {node?.name ?? uuid}
-          </Text>
-          <Text
-            size="1"
-            style={{
-              marginLeft: "8px",
-            }}
-            className="text-accent-6"
-            wrap="nowrap"
+    <div className="flex flex-col items-center gap-6 p-4 w-full max-w-[1400px] mx-auto">
+      {/* Header Section */}
+      <Card className="w-full">
+        <CardHeader className="flex flex-row items-center gap-4 py-6">
+          <div className="flex items-center gap-2">
+             <Flag flag={node?.region ?? ""} />
+             <h1 className="text-2xl font-bold tracking-tight">
+               {node?.name ?? uuid}
+             </h1>
+          </div>
+          <div className="bg-muted px-2 py-1 rounded text-xs font-mono text-muted-foreground">
+             {node?.uuid}
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Details Grid */}
+      <DetailsGrid box align="center" uuid={uuid ?? ""} />
+
+      {/* Charts Section */}
+      <div className="w-full space-y-6">
+        <div className="flex justify-center">
+          <SegmentedControl.Root
+            radius="full"
+            value={chartView}
+            onValueChange={(value) => setChartView(value as "load" | "ping")}
           >
-            {node?.uuid}
-          </Text>
-        </h1>
-        <DetailsGrid box align="center" uuid={uuid ?? ""} />
-      </div><SegmentedControl.Root
-        radius="full"
-        value={chartView}
-        onValueChange={(value) => setChartView(value as "load" | "ping")}
-      >
-        <SegmentedControl.Item value="load">
-          {t("nodeCard.load")}
-        </SegmentedControl.Item>
-        <SegmentedControl.Item value="ping">
-          {t("nodeCard.ping")}
-        </SegmentedControl.Item>
-      </SegmentedControl.Root>
-      {/* Recharts */}
-      {chartView === "load" ? (
-        <LoadChart data={liveDataToRecords(uuid ?? "", recent)} />
-      ) : (
-        <PingChart uuid={uuid ?? ""} />
-      )}
-      <div className="grid w-full items-center justify-center mx-auto h-full gap-4 p-1 md:grid-cols-[repeat(auto-fit,minmax(620px,1fr))] grid-cols-[repeat(auto-fit,minmax(320px,1fr))]"></div>
-    </Flex>
+            <SegmentedControl.Item value="load">
+              {t("nodeCard.load")}
+            </SegmentedControl.Item>
+            <SegmentedControl.Item value="ping">
+              {t("nodeCard.ping")}
+            </SegmentedControl.Item>
+          </SegmentedControl.Root>
+        </div>
+
+        {chartView === "load" ? (
+          <LoadChart data={liveDataToRecords(uuid ?? "", recent)} />
+        ) : (
+          <PingChart uuid={uuid ?? ""} />
+        )}
+      </div>
+    </div>
   );
 }

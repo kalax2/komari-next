@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import { usePublicInfo } from "@/contexts/PublicInfoContext";
 import Loading from "@/components/loading";
+import CircleChart from "@/components/CircleChart";
 
 type LoadChartProps = {
   data: RecordFormat[];
@@ -206,14 +207,26 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
   const percentageFormatter = (value: number) => {
     return `${value.toFixed(2)}%`;
   };
-  const ChartTitle = (text: string, left: React.ReactNode) => {
+  
+  const ChartTitle = (text: string, percentage: number | null, rightText: React.ReactNode) => {
     return (
-      <Flex justify="between" align="center" className="mb-2">
-        <label className="text-xl font-bold">{text}</label>
-        <label className="text-sm text-muted-foreground">{left}</label>
+      <Flex justify="between" align="start" className="mb-2 h-[80px]">
+        <Flex direction="column" justify="center" gap="1">
+             <label className="text-xl font-bold">{text}</label>
+             {/* Simple numeric display if chart is not used but logic requires percentage, though CircleChart is preferred */}
+        </Flex>
+        <Flex align="center" gap="2" className="h-full">
+            {percentage !== null && !isNaN(percentage) && (
+              <div className="scale-75 origin-right">
+                <CircleChart value={percentage} label="" color={primaryColor} />
+              </div>
+            )}
+            <div className="text-sm text-muted-foreground text-right">{rightText}</div>
+        </Flex>
       </Flex>
     );
   };
+
   const minute = 60;
   const hour = minute * 60;
   const MAX_REALTIME_POINTS = 30 * 5;
@@ -277,7 +290,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         </div>
       )}
       <div
-        className="gap-2 grid w-full justify-items-center mx-auto max-w-[900px]"
+        className="gap-4 grid w-full justify-items-center mx-auto max-w-full"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(288px, 1fr))",
         }}
@@ -286,6 +299,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         <Card className={cn}>
           {ChartTitle(
             "CPU",
+            live_data?.cpu?.usage ?? null,
             live_data?.cpu?.usage ? `${live_data.cpu.usage.toFixed(2)}%` : "-"
           )}
           <ChartContainer
@@ -340,6 +354,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         <Card className={cn}>
           {ChartTitle(
             "Ram",
+            live_data?.ram?.used && node?.mem_total ? (live_data.ram.used / node.mem_total) * 100 : null,
             <Flex gap="0" direction="column" align="end" className="text-sm">
               <label>
                 {live_data?.ram?.used
@@ -452,6 +467,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         <Card className={cn}>
           {ChartTitle(
             "Disk",
+             live_data?.disk?.used && node?.disk_total ? (live_data.disk.used / node.disk_total) * 100 : null,
             live_data?.disk?.used
               ? `${formatBytes(live_data.disk.used)} / ${formatBytes(
                   node?.disk_total || 0
@@ -511,6 +527,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         <Card className={cn}>
           {ChartTitle(
             t("nodeCard.networkSpeed"),
+            null,
             <Flex gap="0" align="end" direction="column" className="text-sm">
               <span>
                 ↑ {formatBytes(live_data?.network.up || 0)}
@@ -585,6 +602,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         <Card className={cn}>
           {ChartTitle(
             t("chart.connections"),
+            null,
             <Flex gap="0" align="end" direction="column" className="text-sm">
               <span>TCP: {live_data?.connections.tcp}</span>
               <span>UDP: {live_data?.connections.udp}</span>
@@ -651,7 +669,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
         </Card>
         {/* Process */}
         <Card className={cn}>
-          {ChartTitle(t("chart.process"), live_data?.process)}
+          {ChartTitle(t("chart.process"), live_data?.process ? live_data.process : null, live_data?.process)}
           <ChartContainer
             config={{
               process: {
@@ -707,12 +725,18 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
             <Card key={`gpu-${index}`} className={cn}>
               <Flex direction="column" gap="2" className="mb-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xl font-bold">{`GPU ${index + 1}: ${
-                    gpu.name
-                  }`}</label>
-                  <span className="text-sm text-muted-foreground">
-                    {formatBytes(gpu.memory_total)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                     <label className="text-xl font-bold">{`GPU ${index + 1}`}</label>
+                     <div className="scale-75 origin-left">
+                        <CircleChart value={gpu.utilization} label="" color={primaryColor} />
+                     </div>
+                  </div>
+                  <Flex direction="column" align="end">
+                    <span className="text-sm font-bold">{gpu.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                        {formatBytes(gpu.memory_total)}
+                    </span>
+                  </Flex>
                 </div>
                 <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground">
                   <div className="text-center">

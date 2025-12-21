@@ -1,12 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { UpDownStack } from "./UpDownStack";
 import { useNodeList } from "@/contexts/NodeListContext";
 import { useLiveData } from "@/contexts/LiveDataContext";
 import { formatUptime } from "./Node";
 import { formatBytes } from "@/utils/unitHelper";
-import { Flex } from "@/components/ui/flex";
-import { Text } from "@/components/ui/text";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type DetailsGridProps = {
   uuid: string;
@@ -15,109 +12,101 @@ type DetailsGridProps = {
   align?: "start" | "center" | "end";
 };
 
+const StatCard = ({ title, value, subValue, className }: { title: string, value: React.ReactNode, subValue?: React.ReactNode, className?: string }) => (
+  <Card className={`shadow-sm ${className}`}>
+    <CardHeader className="p-4 pb-2">
+      <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="p-4 pt-0">
+      <div className="text-lg font-bold break-all">{value}</div>
+      {subValue && <div className="text-xs text-muted-foreground break-all">{subValue}</div>}
+    </CardContent>
+  </Card>
+);
+
 export const DetailsGrid = ({ uuid, gap, box, align }: DetailsGridProps) => {
   const { t } = useTranslation();
-
   const { nodeList } = useNodeList();
   const { live_data } = useLiveData();
   const node = nodeList?.find((n) => n.uuid === uuid);
-
-  const Container: any = box ? Card : 'div';
+  const data = live_data?.data.data[uuid ?? ""];
 
   return (
-    <Container
-      className={`DetailsGrid max-w-[900px]`}
-    >
-      <div className={`flex flex-wrap gap-${gap ?? "4"} basis-full justify-center ${align === "center" ? "justify-between" : ""}`}>
-        <UpDownStack
-          className="md:w-128 flex-[0_0_calc(50%-0.5rem)]"
-          up="CPU"
-          down={`${node?.cpu_name} (x${node?.cpu_cores})`}
-        />
-        <label className={`flex flex-wrap gap-2 gap-x-8 flex-[0_0_calc(50%-0.5rem)] ${align === "center" ? "justify-end" : ""}`}>
-          <UpDownStack up={t("nodeCard.arch")} down={node?.arch ?? "Unknown"} />
+    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-${gap ?? "4"} w-full`}>
+      {/* CPU */}
+      <StatCard
+        title="CPU"
+        value={`${node?.cpu_name || 'Unknown'}`}
+        subValue={`${node?.cpu_cores} Cores`}
+        className="col-span-2 md:col-span-2"
+      />
 
-          <UpDownStack
-            up={t("nodeCard.virtualization")}
-            align={align === "center" ? "end" : "start"}
-            down={node?.virtualization ?? "Unknown"}
-          />
-        </label>
-        <UpDownStack up="GPU" down={node?.gpu_name ?? "Unknown"} className="flex-[0_0_calc(50%-0.5rem)]" />
-        <div className={`flex flex-col gap-0 flex-[0_0_calc(50%-0.5rem)] ${align === "center" ? "items-end text-right" : "items-start"}`}>
-          <label className="text-base font-bold">{t("nodeCard.os")}</label>
-          <label className="text-sm text-muted-foreground -mt-1">{node?.os ?? "Unknown"}</label>
-          <label className="text-xs text-muted-foreground opacity-75">
-            {t("nodeCard.kernelVersion")}: {node?.kernel_version ?? "Unknown"}
-          </label>
-        </div>
+      {/* Architecture */}
+      <StatCard title={t("nodeCard.arch")} value={node?.arch || "Unknown"} />
 
-        <UpDownStack
-          className="md:w-64 w-full flex-[0_0_calc(50%-0.5rem)]"
-          up={t("nodeCard.networkSpeed")}
-          down={` ↑ ${formatBytes(
-            live_data?.data.data[uuid ?? ""]?.network.up || 0
-          )}/s
-          ↓
-          ${formatBytes(
-            live_data?.data.data[uuid ?? ""]?.network.down || 0
-          )}/s`}
-        />
-        <UpDownStack
-          up={t("nodeCard.totalTraffic")}
-          align={align === "center" ? "end" : "start"}
-          className="flex-[0_0_calc(50%-0.5rem)]"
-          down={`↑
-          ${formatBytes(
-            live_data?.data.data[uuid ?? ""]?.network.totalUp || 0
-          )}
-          ↓
-          ${formatBytes(
-            live_data?.data.data[uuid ?? ""]?.network.totalDown || 0
-          )}`}
-        />
-        <UpDownStack
-          className="md:w-70 w-full flex-[0_0_calc(50%-0.5rem)]"
-          up={t("nodeCard.ram")}
-          down={formatBytes(node?.mem_total || 0)}
-        />
-        <UpDownStack
-          up={t("nodeCard.swap")}
-          className="flex-[0_0_calc(50%-0.5rem)]"
-          align={align === "center" ? "end" : "start"}
-          down={formatBytes(node?.swap_total || 0)}
-        />
-        <UpDownStack
-          className="md:w-64 w-full flex-[0_0_calc(50%-0.5rem)]"
-          up={t("nodeCard.disk")}
-          down={formatBytes(node?.disk_total || 0)}
-        />
-        <div className="flex-[0_0_calc(50%-0.5rem)]" />
-        <UpDownStack
-          up={t("nodeCard.uptime")}
-          className="flex-[0_0_calc(50%-0.5rem)]"
-          down={
-            live_data?.data.data[uuid ?? ""]?.uptime
-              ? formatUptime(live_data?.data.data[uuid ?? ""]?.uptime, t)
-              : "-"
-          }
-        />
-        <label className={`flex flex-wrap gap-2 flex-[0_0_calc(50%-0.5rem)] ${align === "center" ? "justify-end" : ""}`}>
-          <Flex align={"center"} gap="2">
-            <Text size="2" weight="bold" className="whitespace-nowrap">
-              {t("nodeCard.last_updated")}
-            </Text>
-            <Text size="2">
-              {node?.updated_at
-                ? new Date(
-                  live_data?.data.data[uuid ?? ""]?.updated_at ||
-                  node.updated_at
-                ).toLocaleString()
-                : "-"}
-            </Text>
-          </Flex>
-        </label>
-      </div>
-    </Container>
+      {/* Virtualization */}
+      <StatCard title={t("nodeCard.virtualization")} value={node?.virtualization || "Unknown"} />
+
+      {/* GPU */}
+      <StatCard title="GPU" value={node?.gpu_name || "Unknown"} className="col-span-2 md:col-span-1" />
+
+      {/* OS */}
+      <StatCard
+        title={t("nodeCard.os")}
+        value={node?.os || "Unknown"}
+        subValue={`${t("nodeCard.kernelVersion")}: ${node?.kernel_version || "Unknown"}`}
+      />
+
+      {/* Network Speed */}
+      <StatCard
+        title={t("nodeCard.networkSpeed")}
+        value={
+          <div className="flex flex-col gap-1 text-base">
+            <span className="text-green-500 whitespace-nowrap">↑ {formatBytes(data?.network.up || 0)}/s</span>
+            <span className="text-blue-500 whitespace-nowrap">↓ {formatBytes(data?.network.down || 0)}/s</span>
+          </div>
+        }
+      />
+
+      {/* Total Traffic */}
+      <StatCard
+        title={t("nodeCard.totalTraffic")}
+        value={
+          <div className="flex flex-col gap-1 text-base">
+            <span className="text-muted-foreground whitespace-nowrap">↑ {formatBytes(data?.network.totalUp || 0)}</span>
+            <span className="text-muted-foreground whitespace-nowrap">↓ {formatBytes(data?.network.totalDown || 0)}</span>
+          </div>
+        }
+      />
+
+      {/* RAM */}
+      <StatCard title={t("nodeCard.ram")} value={formatBytes(node?.mem_total || 0)} />
+
+      {/* Swap */}
+      <StatCard title={t("nodeCard.swap")} value={formatBytes(node?.swap_total || 0)} />
+
+      {/* Disk */}
+      <StatCard title={t("nodeCard.disk")} value={formatBytes(node?.disk_total || 0)} />
+
+      {/* Uptime */}
+      <StatCard
+        title={t("nodeCard.uptime")}
+        value={data?.uptime ? formatUptime(data?.uptime, t) : "-"}
+      />
+
+      {/* Last Updated */}
+      <Card className="shadow-sm">
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground">{t("nodeCard.last_updated")}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <div className="text-sm font-bold">
+            {node?.updated_at
+              ? new Date(data?.updated_at || node.updated_at).toLocaleString()
+              : "-"}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

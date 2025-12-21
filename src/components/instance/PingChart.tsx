@@ -360,7 +360,7 @@ const PingChart = ({ uuid }: { uuid: string }) => {
         </div>
       )}
       {latestValues.length > 0 ? (
-        <Card className="w-full max-w-[900px] mb-2">
+        <Card className="w-full max-w-full mb-2">
           <Tips className="absolute top-0 right-0 m-2">
             <label>{t("chart.loss_tips")}</label>
           </Tips>
@@ -512,11 +512,11 @@ const PingChart = ({ uuid }: { uuid: string }) => {
           </div>
         </Card>
       ) : (
-        <div className="w-full max-w-[900px] text-center text-muted-foreground mb-2">
+        <div className="w-full max-w-full text-center text-muted-foreground mb-2">
           {t("common.none")}
         </div>
       )}
-      <Card className="w-full max-w-[900px]">
+      <Card className="w-full max-w-full">
         {chartData.length === 0 ? (
           <div className="w-full h-40 flex items-center justify-center text-muted-foreground">
             {t("common.none")}
