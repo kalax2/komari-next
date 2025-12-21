@@ -26,7 +26,7 @@ const Footer = () => {
     const fetchVersionInfo = async () => {
       try {
         const data = await call("common:getVersion")
-        setVersionInfo({ hash: data.hash?.slice(0,7), version: data.version });
+        setVersionInfo({ hash: data.hash?.slice(0, 7), version: data.version });
       } catch (error) {
         console.error('Failed to fetch version info:', error);
       }
@@ -40,11 +40,17 @@ const Footer = () => {
       <div className="container flex flex-col md:flex-row items-center justify-between gap-4 py-6 px-4">
         <div className="flex flex-col items-center md:items-start gap-2">
           <p className="text-sm text-muted-foreground">
-            Supports <span className="font-semibold text-foreground">Komari</span>
+            Supports <span className="font-semibold text-foreground">Komari</span> & Powered by{" "}
+            <a
+              href="https://github.com/tonyliuzj/komari-next/"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-foreground hover:underline"
+            >
+              Komari-Next
+            </a>
           </p>
-          <p className="text-sm text-muted-foreground">
-            Powered by <span className="font-semibold text-foreground">Komari-Next</span>
-          </p>
+
           {buildTime && (
             <p className="text-xs text-muted-foreground">
               Build Time: {formatBuildTime(buildTime)}
