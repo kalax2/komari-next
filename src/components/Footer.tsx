@@ -44,7 +44,7 @@ const Footer = () => {
               <span className="text-muted-foreground font-bold text-xs">K</span>
             </div>
             <p className="text-sm font-medium text-muted-foreground">
-              Komari Monitor
+              Server Monitor
             </p>
           </div>
           <p className="text-sm text-muted-foreground/60 max-w-xs text-center md:text-left">
