@@ -1,69 +1,97 @@
-# Komari Web UI
+# Komari Web UI (Next.js Frontend)
 
-参与翻译Komari？
-- 直接提PR
+Komari Web UI is a modern frontend for the Komari monitoring project.  
+It is built with **Next.js**, **TypeScript**, **Tailwind CSS** and **Shadcn UI** and packaged as a static site that can be used as a Komari theme.
 
-We use AI to assist with translations. If you find any issues, please let us know!
+> This repository contains only the frontend. You will need a running Komari backend instance for the UI to talk to.
 
-How to contribute to Komari translations?
-- Directly PR
+## Features
 
-## 开发环境配置
+- Real‑time dashboard for server and node status
+- Instance detail pages with load and latency charts
+- Node list and management views
+- Internationalization (i18n) with `react-i18next`
+- Responsive layout and dark mode using Shadcn + Tailwind CSS
+- Theme packaging suitable for Komari’s theme system
 
-> 我不是计科专业的，代码质量可能达不到平均水平，React是边学边写的，在此之前我从未接触过前端开发，请多包涵。
+## Tech Stack
 
-### 前置 Nodejs
+- **Framework:** Next.js (App Router, static export)
+- **Language:** TypeScript, React
+- **UI:** Shadcn UI + Radix UI primitives, Tailwind CSS v4
+- **Charts:** Recharts
+- **State / Data:** Custom contexts, RPC2 client, fetch-based APIs
 
-如果未安装，请访问 [Node.js 官网](https://nodejs.org/) 下载并安装。版本建议为 22 及以上。
+## Prerequisites
 
-### 安装依赖
+- **Node.js** 22 or newer (LTS recommended)
+- A running **Komari backend** (API) reachable from the browser
+
+## Getting Started
+
+Clone this repository and install dependencies:
 
 ```bash
 npm install
 ```
 
-> 所有指令均在项目根目录下执行
+### Configure API target
 
-### 修改API地址
+The frontend talks to the Komari backend via `/api/*` rewrites configured in `next.config.ts`.  
+Set the backend base URL using `NEXT_PUBLIC_API_TARGET`:
 
-1. 复制 `.env.example` 文件并重命名为 `.env.development`。
+Create a `.env.local` file in the project root:
 
-2. 修改 `.env.development` 文件中的 `VITE_API_TARGET` 为你的开发环境地址。
+```env
+NEXT_PUBLIC_API_TARGET=http://127.0.0.1:25774
+```
 
-### 启动开发服务器
+Adjust the URL to point to your Komari backend instance.
+
+### Run in development
 
 ```bash
 npm run dev
 ```
 
-### 构建
+Then open `http://localhost:3000` in your browser.
+
+### Build for production / theme packaging
+
+This project is configured for static export (`output: "export"` in `next.config.ts`), with the build output written to `dist/`.
 
 ```bash
 npm run build
 ```
 
-## 主题相关
+After the build completes:
 
-如果你需要基于本项目进行二次开发，可以参考以下步骤：
+- Serve the `dist` directory with any static web server, **or**
+- Use the contents of `dist` as part of a Komari theme bundle.
 
-1. 完成开发环境配置
+## Theme Development
 
-> 如果你是在 Linux 系统下开发，可以直接运行脚本 `build-theme.sh` 快速生成主题包。
+This repository is designed to be used as a custom Komari theme.
 
-2. 修改 `komari-theme.json` 中的相关配置，具体可参考 [主题配置文件 | Komari](https://komari-document.pages.dev/dev/theme.html#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-
-3. 发挥你的想象和创造力，设计并实现你独特的主题风格！
-
-4. 构建主题
+1. Configure and customize the UI as needed.
+2. Edit `komari-theme.json` to match your theme’s metadata and settings.
+3. Build the project:
 
    ```bash
    npm run build
    ```
 
-5. 生成的主题文件位于 `dist` 目录下，创建一个新的文件夹 `my-theme`（名称自定），将 `dist` 目录下复制到 `my-theme` 文件夹中。
+4. The static assets will be generated in the `dist` directory.  
+   Combine them with `komari-theme.json` as required by Komari’s theme system and package them according to the Komari documentation.
 
-6. 将 `komari-theme.json` 文件复制到 `my-theme` 文件夹中。
+## Scripts
 
-7. 将 `my-theme` 文件夹打包为 ZIP 文件。
+- `npm run dev` – Start the Next.js development server
+- `npm run build` – Build the static site into `dist/`
+- `npm run lint` – Run ESLint over the project
 
-8. 在 Komari 的主题管理页面上传并应用你的自定义主题。
+## Contributing
+
+Contributions are welcome.  
+If you find issues or have ideas for improvements, feel free to open an issue or submit a pull request.
+
