@@ -2,9 +2,9 @@
 
 import React, { Suspense, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Settings } from "lucide-react";
+import { Settings, Clock, Globe, Activity, ArrowUpRight, Zap } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -71,12 +71,14 @@ export default function DashboardContent() {
     {
       key: "currentTime",
       title: t("current_time"),
+      icon: <Clock className="h-4 w-4 text-muted-foreground" />,
       renderValue: () => <CurrentTimeCard />,
       visible: statusCardsVisibility.currentTime,
     },
     {
       key: "currentOnline",
       title: t("current_online"),
+      icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       getValue: () =>
         `${live_data?.data?.online.length ?? 0} / ${nodeList?.length ?? 0}`,
       visible: statusCardsVisibility.currentOnline,
@@ -84,6 +86,7 @@ export default function DashboardContent() {
     {
       key: "regionOverview",
       title: t("region_overview"),
+      icon: <Globe className="h-4 w-4 text-muted-foreground" />,
       getValue: () =>
         nodeList
           ? Object.entries(
@@ -100,6 +103,7 @@ export default function DashboardContent() {
     {
       key: "trafficOverview",
       title: t("traffic_overview"),
+      icon: <ArrowUpRight className="h-4 w-4 text-muted-foreground" />,
       getValue: () => {
         const data = live_data?.data?.data;
         const online = live_data?.data?.online;
@@ -123,6 +127,7 @@ export default function DashboardContent() {
     {
       key: "networkSpeed",
       title: t("network_speed"),
+      icon: <Zap className="h-4 w-4 text-muted-foreground" />,
       getValue: () => {
         const data = live_data?.data?.data;
         const online = live_data?.data?.online;
@@ -161,21 +166,23 @@ export default function DashboardContent() {
   //#endregion
 
   return (
-    <div className="container mx-auto p-4 space-y-4">
+    <div className="container mx-auto px-4 space-y-8">
       <Callouts />
-      
-      <Card className="relative">
-        <div className="absolute top-2 right-2 z-10">
+
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-center px-1">
+          <h2 className="text-2xl font-bold tracking-tight">{t("common.dashboard", { defaultValue: "Dashboard" })}</h2>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="outline" size="sm" className="h-9 gap-2 shadow-sm">
                 <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("status_settings")}</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[300px]">
-              <div className="flex flex-col gap-3">
-                <h4 className="font-medium leading-none">{t("status_settings")}</h4>
-                <div className="flex flex-col gap-2">
+            <PopoverContent className="w-[240px] p-4" align="end">
+              <div className="flex flex-col gap-4">
+                <h4 className="font-semibold leading-none">{t("status_settings")}</h4>
+                <div className="flex flex-col gap-3">
                   {statusCards.map((card) => (
                     <StatusSettingSwitch
                       key={card.key}
@@ -195,25 +202,21 @@ export default function DashboardContent() {
           </Popover>
         </div>
 
-        <CardContent className="pt-6">
-          <div
-            className="grid gap-4"
-            style={{
-              gridTemplateColumns: `repeat(auto-fit, minmax(200px, 1fr))`,
-            }}
-          >
-            {statusCards
-              .filter((card) => card.visible)
-              .map((card) => (
-                <TopCard
-                  key={card.key}
-                  title={card.title}
-                  value={card.renderValue ? card.renderValue() : card.getValue?.()}
-                />
-              ))}
-          </div>
-        </CardContent>
-      </Card><Suspense fallback={<div className="p-4">Loading nodes...</div>}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {statusCards
+            .filter((card) => card.visible)
+            .map((card) => (
+              <TopCard
+                key={card.key}
+                title={card.title}
+                value={card.renderValue ? card.renderValue() : card.getValue?.()}
+                icon={card.icon}
+              />
+            ))}
+        </div>
+      </div>
+
+      <Suspense fallback={<div className="p-4">Loading nodes...</div>}>
         <NodeDisplay
           nodes={nodeList ?? []}
           liveData={live_data?.data ?? { online: [], data: {} }}
@@ -227,19 +230,27 @@ type TopCardProps = {
   title: string;
   value: string | number | React.ReactNode;
   description?: string;
+  icon?: React.ReactNode;
 };
 
-const TopCard: React.FC<TopCardProps> = ({ title, value, description }) => {
+const TopCard: React.FC<TopCardProps> = ({ title, value, description, icon }) => {
   return (
-    <div className="flex flex-col gap-1 p-2">
-      <label className="text-muted-foreground text-sm">{title}</label>
-      <label className="font-medium text-lg">{value}</label>
-      {description && (
-        <span className="text-sm text-gray-500">
-          {description}
-        </span>
-      )}
-    </div>
+    <Card className="overflow-hidden border-none shadow-sm bg-card/50 backdrop-blur-sm hover:bg-card transition-colors duration-200">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {description && (
+          <p className="text-xs text-muted-foreground mt-1">
+            {description}
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

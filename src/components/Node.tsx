@@ -106,14 +106,14 @@ const Node = ({ basic, live, online }: NodeProps) => {
             </div>
             <div className="flex flex-col min-w-0">
               <Link href={`/instance/${basic.uuid}`} className="group-hover:text-primary transition-colors">
-                <h3 className="font-bold text-base truncate pr-2">{basic.name}</h3>
+                <h3 className="font-bold text-base truncate pr-2 tracking-tight">{basic.name}</h3>
               </Link>
-              <div className="flex items-center text-xs text-muted-foreground gap-2">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center text-[11px] text-muted-foreground/80 gap-2 mt-0.5">
+                <span className="flex items-center gap-1.5 bg-muted/50 px-1.5 py-0.5 rounded">
                   <img src={getOSImage(basic.os)} alt={basic.os} className="w-3 h-3" />
                   {getOSName(basic.os)}
                 </span>
-                <span className="hidden sm:inline">•</span>
+                <span className="hidden sm:inline opacity-40">•</span>
                 <span className="hidden sm:inline">{formatUptime(liveData.uptime, t)}</span>
               </div>
             </div>
@@ -258,7 +258,7 @@ export const NodeGrid = ({ nodes, liveData }: NodeGridProps) => {
 
   return (
     <div
-      className="grid gap-4 p-4 box-border w-full"
+      className="grid gap-6 py-4 box-border w-full"
       style={{
         gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
       }}

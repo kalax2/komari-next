@@ -36,10 +36,18 @@ const Footer = () => {
   }, [call]);
 
   return (
-    <footer className="border-t bg-background">
-      <div className="container flex flex-col md:flex-row items-center justify-between gap-4 py-6 px-4">
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <p className="text-sm text-muted-foreground">
+    <footer className="border-t bg-card/50">
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6 py-10 px-4">
+        <div className="flex flex-col items-center md:items-start gap-3">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-6 bg-muted rounded flex items-center justify-center">
+              <span className="text-muted-foreground font-bold text-xs">K</span>
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Komari Monitor
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground/60 max-w-xs text-center md:text-left">
             Supports <span className="font-semibold text-foreground">Komari</span> & Powered by{" "}
             <a
               href="https://github.com/tonyliuzj/komari-next/"
@@ -50,6 +58,7 @@ const Footer = () => {
               Komari-Next
             </a>
           </p>
+
 
           {buildTime && (
             <p className="text-xs text-muted-foreground">

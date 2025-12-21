@@ -12,6 +12,7 @@ import "./NodeDisplay.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export type ViewMode = "grid" | "table";
 
@@ -104,126 +105,113 @@ const NodeDisplay: React.FC<NodeDisplayProps> = ({ nodes, liveData }) => {
   }, [nodes, searchTerm, liveData, selectedGroup]);
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-6">
       {/* Control Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 bg-card p-4 rounded-lg border shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
         {/* Search Box */}
-        <div className="relative flex-1 max-w-md flex items-center gap-2">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="relative flex-1 max-w-lg group">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <Input
             ref={searchRef}
             placeholder={t("search.placeholder", {
-              defaultValue: "Search nodes...",
+              defaultValue: "Search nodes... (Press '/' to focus)",
             })}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 pr-9"
+            className="pl-10 pr-10 h-11 bg-card border-none shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
           />
           {searchTerm && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-1 top-1 h-7 w-7"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-transparent"
               onClick={() => {
                 setSearchTerm("");
                 searchRef.current?.focus();
               }}
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
             </Button>
           )}
         </div>
 
-        {/* View Mode */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:inline-block">
-            {t("view.mode", { defaultValue: "View" })}
-          </span>
-          <div className="flex items-center gap-1 border rounded-md p-1 bg-muted/50">
+        {/* View Mode & Group Selector */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border shadow-sm">
             <Button
               variant={viewMode === "grid" ? "secondary" : "ghost"}
-              size="icon"
-              className="h-8 w-8"
+              size="sm"
+              className={cn("h-8 gap-2 px-3", viewMode === "grid" && "bg-card shadow-sm")}
               onClick={() => setViewMode("grid")}
             >
               <Grid3X3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Grid</span>
             </Button>
             <Button
               variant={viewMode === "table" ? "secondary" : "ghost"}
-              size="icon"
-              className="h-8 w-8"
+              size="sm"
+              className={cn("h-8 gap-2 px-3", viewMode === "table" && "bg-card shadow-sm")}
               onClick={() => setViewMode("table")}
             >
               <Table2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Table</span>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Group Selector */}
-      {showGroupSelector && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          <span className="text-sm text-muted-foreground whitespace-nowrap pl-1">
-            {t("common.group", { defaultValue: "Group" })}
-          </span>
-          <Tabs value={selectedGroup} onValueChange={setSelectedGroup}>
-            <TabsList className="h-9 w-full justify-start">
-              <TabsTrigger value="all">
-                {t("common.all", { defaultValue: "All" })}
-              </TabsTrigger>
-              {groups.map((group) => (
-                <TabsTrigger key={group} value={group}>
-                  {group}
+      {/* Group Selector & Stats */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {showGroupSelector && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <Tabs value={selectedGroup} onValueChange={setSelectedGroup} className="w-auto">
+              <TabsList className="h-10 bg-muted/50 p-1 border">
+                <TabsTrigger value="all" className="px-4">
+                  {t("common.all", { defaultValue: "All" })}
                 </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-      )}
-
-      {/* Results Stats */}
-      <div className="flex justify-between items-center px-1">
-        {searchTerm.trim() ? (
-          <span className="text-sm text-muted-foreground">
-            {t("search.results", {
-              count: filteredNodes.length,
-              total:
-                selectedGroup === "all"
-                  ? nodes.length
-                  : nodes.filter((n) => n.group === selectedGroup).length,
-              defaultValue: `Found ${filteredNodes.length} nodes, total ${
-                selectedGroup === "all"
-                  ? nodes.length
-                  : nodes.filter((n) => n.group === selectedGroup).length
-              }`,
-            })}
-          </span>
-        ) : (
-          <span className="text-sm text-muted-foreground">
-            {selectedGroup === "all"
-              ? t("nodeCard.totalNodes", {
-                  total: nodes.length,
-                  online: liveData?.online?.length || 0,
-                  defaultValue: `Total ${nodes.length} nodes, ${
-                    liveData?.online?.length || 0
-                  } online`,
-                })
-              : t("nodeCard.groupNodes", {
-                  group: selectedGroup,
-                  total: filteredNodes.length,
-                  online: filteredNodes.filter((n) =>
-                    liveData?.online?.includes(n.uuid)
-                  ).length,
-                  defaultValue: `${selectedGroup}: Total ${
-                    filteredNodes.length
-                  } nodes, ${
-                    filteredNodes.filter((n) =>
-                      liveData?.online?.includes(n.uuid)
-                    ).length
-                  } online`,
-                })}
-          </span>
+                {groups.map((group) => (
+                  <TabsTrigger key={group} value={group} className="px-4">
+                    {group}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         )}
+
+        {/* Results Stats */}
+        <div className="flex items-center gap-2 px-1">
+          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          {searchTerm.trim() ? (
+            <span className="text-sm font-medium text-muted-foreground">
+              {t("search.results", {
+                count: filteredNodes.length,
+                total:
+                  selectedGroup === "all"
+                    ? nodes.length
+                    : nodes.filter((n) => n.group === selectedGroup).length,
+                defaultValue: `Found ${filteredNodes.length} nodes`,
+              })}
+            </span>
+          ) : (
+            <span className="text-sm font-medium text-muted-foreground">
+              {selectedGroup === "all"
+                ? t("nodeCard.totalNodes", {
+                    total: nodes.length,
+                    online: liveData?.online?.length || 0,
+                    defaultValue: `${liveData?.online?.length || 0} Online / ${nodes.length} Total`,
+                  })
+                : t("nodeCard.groupNodes", {
+                    group: selectedGroup,
+                    total: filteredNodes.length,
+                    online: filteredNodes.filter((n) =>
+                      liveData?.online?.includes(n.uuid)
+                    ).length,
+                    defaultValue: `${filteredNodes.filter((n) => liveData?.online?.includes(n.uuid)).length} Online in ${selectedGroup}`,
+                  })}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Node Display Area */}

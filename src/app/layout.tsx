@@ -16,10 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased bg-background text-foreground min-h-screen flex flex-col">
+      <body className="antialiased bg-background text-foreground min-h-screen flex flex-col transition-colors duration-300">
         <Providers>
           <NavBar />
-          <main className="flex-1">
+          <main className="flex-1 py-8 md:py-12">
             {children}
           </main>
           <Footer />
