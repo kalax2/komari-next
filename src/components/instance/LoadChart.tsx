@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useLiveData } from "@/contexts/LiveDataContext";
 import { useTranslation } from "react-i18next";
-import { Card, Flex, SegmentedControl } from "@radix-ui/themes";
+import { Card, CardContent } from "@/components/ui/card";
+import { SegmentedControl, SegmentedControlItem } from "@/components/ui/segmented-control";
 import { formatBytes } from "@/utils/unitHelper";
 import { useNodeList } from "@/contexts/NodeListContext";
 import fillMissingTimePoints, { type RecordFormat } from "@/utils/RecordHelper";
@@ -216,20 +217,20 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
   
   const ChartTitle = (text: string, percentage: number | null, rightText: React.ReactNode) => {
     return (
-      <Flex justify="between" align="start" className="mb-2 h-[80px]">
-        <Flex direction="column" justify="center" gap="1">
+      <div className="flex justify-between items-start mb-2 h-[80px]">
+        <div className="flex flex-col justify-center gap-1">
              <label className="text-xl font-bold">{text}</label>
              {/* Simple numeric display if chart is not used but logic requires percentage, though CircleChart is preferred */}
-        </Flex>
-        <Flex align="center" gap="2" className="h-full">
+        </div>
+        <div className="flex items-center gap-2 h-full">
             {percentage !== null && !isNaN(percentage) && (
               <div className="scale-75 origin-right">
                 <CircleChart value={percentage} label="" color={primaryColor} />
               </div>
             )}
             <div className="text-sm text-muted-foreground text-right">{rightText}</div>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     );
   };
 
@@ -262,27 +263,19 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
       })();
 
   return (
-    <Flex
-      direction="column"
-      align="center"
-      gap="4"
-      className="w-full max-w-screen"
-    >
+    <div className="flex flex-col items-center gap-4 w-full max-w-screen">
       <div className="w-full overflow-x-auto px-2">
         <div className="w-max mx-auto">
-          <SegmentedControl.Root value={hoursView} onValueChange={setHoursView}>
+          <SegmentedControl value={hoursView} onValueChange={setHoursView}>
             {avaliableView.map((view) => (
-              <SegmentedControl.Item
-                key={view.label}
+              <SegmentedControlItem key={view.label}
                 value={view.label}
                 className="capitalize"
               >
-                {view.label === "real-time"
-                  ? t("common.real_time")
-                  : view.label}
-              </SegmentedControl.Item>
+                {view.label}
+              </SegmentedControlItem>
             ))}
-          </SegmentedControl.Root>
+          </SegmentedControl>
         </div>
       </div>
       {loading && (
@@ -303,6 +296,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
       >
         {/* CPU */}
         <Card className={cn}>
+          <CardContent className="p-4">
           {ChartTitle(
             "CPU",
             live_data?.cpu?.usage ?? null,
@@ -355,9 +349,11 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
                 dot={false}
               /></AreaChart>
           </ChartContainer>
+          </CardContent>
         </Card>
         {/* Ram */}
         <Card className={cn}>
+          <CardContent className="p-4">
           {ChartTitle(
             "Ram",
             calculatePercentage(live_data?.ram?.used, Number(node?.mem_total)),
@@ -393,9 +389,9 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
             <AreaChart
               data={chartData.map((item) => ({
                 time: item.time,
-                ram: ((item.ram ?? 0) / (node?.mem_total ?? 1)) * 100,
+                ram: node?.mem_total && node.mem_total > 0 ? ((item.ram ?? 0) / node.mem_total) * 100 : 0,
                 ram_raw: item.ram,
-                swap: ((item.swap ?? 0) / (node?.swap_total ?? 1)) * 100,swap_raw: item.swap,client: item.client,
+                swap: node?.swap_total && node.swap_total > 0 ? ((item.swap ?? 0) / node.swap_total) * 100 : 0,swap_raw: item.swap,client: item.client,
               }))}
               accessibilityLayer
               margin={chartMargin}
@@ -499,7 +495,7 @@ const LoadChart = ({ data = [] }: LoadChartProps) => {
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                domain={[0, node?.disk_total || 100]}
+                domain={[0, node?.disk_total && node.disk_total > 0 ? node.disk_total : 100]}
                 tickFormatter={(value, index) =>
                   index !== 0 ? `${formatBytes(value)}` : ""
                 }
