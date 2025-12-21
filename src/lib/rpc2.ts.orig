@@ -122,11 +122,6 @@ export class RPC2Client {
    * 自动建立连接（非阻塞）
    */
   private autoConnect(): void {
-    // Skip during SSR/SSG
-    if (typeof window === 'undefined') {
-      return;
-    }
-
     if (this.connectionState !== RPC2ConnectionState.DISCONNECTED) {
       return;
     }
@@ -328,14 +323,6 @@ export class RPC2Client {
   }
 
   private getWebSocketUrl(): string {
-    // Guard against SSR/SSG
-    if (typeof window === 'undefined') {
-      throw new Error('WebSocket connections are not available during server-side rendering');
-    }
-    // Guard against SSR/SSG
-    if (typeof window === 'undefined') {
-      throw new Error('WebSocket connections are not available during server-side rendering');
-    }
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.host;
     return `${protocol}//${host}${this.baseUrl}`;

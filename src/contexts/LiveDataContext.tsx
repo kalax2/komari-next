@@ -36,6 +36,9 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // 采用 RPC2 轮询最新状态，替代 WebSocket
   useEffect(() => {
+    // Skip during SSR/SSG
+    if (typeof window === 'undefined') return;
+    
     let timer: number | undefined;
     let stopped = false;
     let running = false; // 防抖：避免并发请求
