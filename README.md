@@ -5,6 +5,8 @@ It is built with **Next.js**, **TypeScript**, **Tailwind CSS** and **Shadcn UI**
 
 > This repository contains only the frontend. You will need a running Komari backend instance for the UI to talk to.
 
+[Demo](https://probes.top)
+
 ## Features
 
 - Real‑time dashboard for server and node status
