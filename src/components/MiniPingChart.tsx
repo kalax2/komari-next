@@ -5,7 +5,6 @@ import Loading from "@/components/loading";
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   ChartLegend,
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
@@ -154,17 +153,6 @@ const MiniPingChart = ({
     return "";
   };
 
-  const lableFormatter = (value: any) => {
-    const date = new Date(value);
-    return date.toLocaleString([], {
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
   const chartConfig = useMemo(() => {
     const config: Record<string, any> = {};
     tasks.forEach((task, idx) => {
@@ -178,16 +166,64 @@ const MiniPingChart = ({
     return config;
   }, [tasks, t]);
 
+  const CustomTooltip = useCallback(({ active, payload, label }: any) => {
+    if (!active || !payload || !payload.length) return null;
+
+    const date = new Date(label);
+    const formattedDate = date.toLocaleString([], {
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    return (
+      <div className="rounded-lg border bg-background p-2 shadow-sm">
+        <div className="text-xs text-muted-foreground mb-2">{formattedDate}</div>
+        <div className="grid gap-1">
+          {payload.map((entry: any, index: number) => {
+            if (entry.value === null) return null;
+            const task = tasks.find(t => String(t.id) === entry.dataKey);
+            if (!task) return null;
+
+            const lossText = typeof task.loss === 'number' ? `${task.loss.toFixed(1)}%` : 'N/A';
+            const volText = typeof task.p99_p50_ratio === 'number' ? task.p99_p50_ratio.toFixed(1) : 'N/A';
+
+            return (
+              <div key={index} className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="font-medium text-sm">{task.name}</span>
+                </div>
+                <div className="ml-4 text-xs">
+                  <div>{Math.round(entry.value)} ms</div>
+                  <div className="text-muted-foreground">
+                    {lossText} {t('chart.lossRate')} / {volText} {t('chart.volatility')}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }, [tasks, t]);
+
   const handleLegendClick = useCallback((e: any) => {
     const key = e.dataKey;
     setHiddenLines((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
   return (
-    <Card style={{ width, height }} className="flex flex-col p-3 gap-2">
+    <Card style={{ width, height: 'auto', minHeight: height }} className="flex flex-col p-3 gap-2">
       {loading && (
         <div
           className="w-full flex-grow flex items-center justify-center"
+          style={{ minHeight: typeof height === 'number' ? `${height - 100}px` : '200px' }}
         >
           <Loading />
         </div>
@@ -195,18 +231,19 @@ const MiniPingChart = ({
       {error && (
         <div
           className="w-full flex-grow flex items-center justify-center text-destructive"
+          style={{ minHeight: typeof height === 'number' ? `${height - 100}px` : '200px' }}
         >
           {error}
         </div>
       )}
       {!loading && !error && chartData.length === 0 ? (
-        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+        <div className="w-full flex items-center justify-center text-muted-foreground" style={{ minHeight: typeof height === 'number' ? `${height - 100}px` : '200px' }}>
           {t("nodeCard.noPingData")}
         </div>
       ) : (
         !loading &&
         !error && (
-          <ChartContainer config={chartConfig} className="w-full flex-grow">
+          <ChartContainer config={chartConfig} className="w-full" style={{ height: typeof height === 'number' ? `${height - 80}px` : '220px' }}>
             <LineChart
               data={chartData}
               accessibilityLayer
@@ -233,13 +270,7 @@ const MiniPingChart = ({
               />
               <ChartTooltip
                 cursor={false}
-                formatter={(v: any) => v === null ? null : `${Math.round(v)} ms`}
-                content={
-                  <ChartTooltipContent
-                    labelFormatter={lableFormatter}
-                    indicator="dot"
-                  />
-                }
+                content={<CustomTooltip />}
               />
               <ChartLegend onClick={handleLegendClick} />
               {(() => {
