@@ -15,6 +15,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { getOSImage, getOSName } from "@/utils";
 import { formatBytes } from "@/utils/unitHelper";
 import { useTheme } from "@/contexts/ThemeContext";
+import { usePingStats } from "@/hooks/usePingStats";
 
 import Flag from "./Flag";
 import PriceTags from "./PriceTags";
@@ -69,6 +70,7 @@ const Node = ({ basic, live, online }: NodeProps) => {
   const [t] = useTranslation();
   const isMobile = useIsMobile();
   const { themeConfig } = useTheme();
+  const pingStats = usePingStats(basic.uuid, 24);
 
   const defaultLive = {
     cpu: { usage: 0 },
@@ -241,6 +243,21 @@ const Node = ({ basic, live, online }: NodeProps) => {
                   <ArrowDown className="h-3 w-3 mr-0.5" /> {totalDownload}
                 </span>
              </div>
+          </div>
+
+          <Separator className="opacity-30" />
+
+          {/* Ping Statistics */}
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Ping Stats (24h)</span>
+            {pingStats.hasData ? (
+              <div className="flex gap-3 font-mono text-xs text-muted-foreground">
+                <span>{pingStats.avgLoss.toFixed(1)}% Loss</span>
+                <span>{pingStats.avgVolatility.toFixed(1)} Vol</span>
+              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground/70 italic">No ping data</span>
+            )}
           </div>
 
           {/* Traffic Limit Progress (if exists) */}
