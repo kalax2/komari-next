@@ -10,6 +10,7 @@ interface ThemeConfig {
   colorTheme: ColorTheme;
   cardLayout: CardLayout;
   graphDesign: GraphDesign;
+  backgroundImageUrl?: string;
 }
 
 interface ThemeContextType {
@@ -17,6 +18,7 @@ interface ThemeContextType {
   setColorTheme: (theme: ColorTheme) => void;
   setCardLayout: (layout: CardLayout) => void;
   setGraphDesign: (design: GraphDesign) => void;
+  setBackgroundImageUrl: (url: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             colorTheme: 'default' as ColorTheme,
             cardLayout: 'classic' as CardLayout,
             graphDesign: 'circle' as GraphDesign,
+            backgroundImageUrl: '',
           };
         }
       }
@@ -51,6 +54,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       colorTheme: 'default' as ColorTheme,
       cardLayout: 'classic' as CardLayout,
       graphDesign: 'circle' as GraphDesign,
+      backgroundImageUrl: '',
     };
   });
 
@@ -61,6 +65,16 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       // Apply color theme to document root
       const root = document.documentElement;
       root.setAttribute('data-color-theme', themeConfig.colorTheme);
+
+      // Apply background image
+      if (themeConfig.backgroundImageUrl) {
+        document.body.style.backgroundImage = `url(${themeConfig.backgroundImageUrl})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+      } else {
+        document.body.style.backgroundImage = '';
+      }
     }
   }, [themeConfig]);
 
@@ -76,8 +90,12 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setThemeConfig(prev => ({ ...prev, graphDesign: design }));
   };
 
+  const setBackgroundImageUrl = (url: string) => {
+    setThemeConfig(prev => ({ ...prev, backgroundImageUrl: url }));
+  };
+
   return (
-    <ThemeContext.Provider value={{ themeConfig, setColorTheme, setCardLayout, setGraphDesign }}>
+    <ThemeContext.Provider value={{ themeConfig, setColorTheme, setCardLayout, setGraphDesign, setBackgroundImageUrl }}>
       {children}
     </ThemeContext.Provider>
   );

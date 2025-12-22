@@ -1,18 +1,21 @@
 "use client";
 
+import { useState } from 'react';
 import { useTheme, ColorTheme, CardLayout, GraphDesign } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Palette, Layout, PieChart } from 'lucide-react';
+import { Palette, Layout, PieChart, Image } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const ThemeSwitcher = () => {
-  const { themeConfig, setColorTheme, setCardLayout, setGraphDesign } = useTheme();
+  const { themeConfig, setColorTheme, setCardLayout, setGraphDesign, setBackgroundImageUrl } = useTheme();
   const { t } = useTranslation();
+  const [bgUrlInput, setBgUrlInput] = useState(themeConfig.backgroundImageUrl || '');
 
   const colorThemes: { value: ColorTheme; label: string; colors: string }[] = [
     { value: 'default', label: 'Default', colors: 'from-blue-500 to-purple-500' },
@@ -123,6 +126,43 @@ const ThemeSwitcher = () => {
                   )}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="border-t pt-3">
+            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              Background Image
+            </h4>
+            <div className="flex flex-col gap-2">
+              <Input
+                type="url"
+                placeholder="Enter image URL"
+                value={bgUrlInput}
+                onChange={(e) => setBgUrlInput(e.target.value)}
+                className="text-xs"
+              />
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="flex-1 text-xs h-8"
+                  onClick={() => setBackgroundImageUrl(bgUrlInput)}
+                >
+                  Apply
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 text-xs h-8"
+                  onClick={() => {
+                    setBgUrlInput('');
+                    setBackgroundImageUrl('');
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
             </div>
           </div>
         </div>
