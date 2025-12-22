@@ -51,7 +51,7 @@ const MiniPingChartFloat: React.FC<FloatMiniPingChartProps> = ({
 
   // Calculate responsive dimensions
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const responsiveWidth = isMobile ? '95vw' : (typeof chartWidth === 'number' ? `${chartWidth}px` : chartWidth);
+  const responsiveWidth = isMobile ? '100vw' : (typeof chartWidth === 'number' ? `${chartWidth}px` : chartWidth);
   const responsiveHeight = isMobile ? 250 : chartHeight;
 
   return (
@@ -71,8 +71,9 @@ const MiniPingChartFloat: React.FC<FloatMiniPingChartProps> = ({
         sideOffset={5}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="p-2 border shadow-lg rounded-lg z-[5] bg-card max-w-[95vw] w-auto"
+        className="p-2 border shadow-lg rounded-lg z-[5] bg-card w-auto md:max-w-[95vw] max-w-[100vw] mx-auto"
         style={{ width: responsiveWidth }}
+        align="center"
       >
         <MiniPingChart hours={hours} uuid={uuid} width="100%" height={responsiveHeight} />
       </PopoverContent>
