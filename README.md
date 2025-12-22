@@ -7,6 +7,8 @@ It is built with **Next.js**, **TypeScript**, **Tailwind CSS** and **Shadcn UI**
 
 [Demo](https://probes.top)
 
+[Download theme file](https://github.com/tonyliuzj/komari-next/releases/latest/download/dist-release.zip)
+
 ## Features
 
 - Real‑time dashboard for server and node status
